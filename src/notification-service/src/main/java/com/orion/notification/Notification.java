@@ -1,6 +1,7 @@
 package com.orion.notification;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
@@ -13,8 +14,10 @@ public class Notification {
     private Long userId;
     private String message;
     private boolean readStatus;
+    private LocalDateTime createdAt;
 
     public Notification() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -43,5 +46,13 @@ public class Notification {
 
     public void setReadStatus(boolean readStatus) {
         this.readStatus = readStatus;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

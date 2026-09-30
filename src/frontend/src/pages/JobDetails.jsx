@@ -4,16 +4,21 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { getJobById } from "../services/jobService";
 import { useAuth } from "../context/AuthContext";
 import { getCandidates } from "../services/candidateService";
-import { createApplication } from "../services/applicationService";
+import {
+  createApplication,
+  getApplications,
+} from "../services/applicationService";
+
 function JobDetails() {
   const { user } = useAuth();
-const [applying, setApplying] = useState(false);
-const [applicationMessage, setApplicationMessage] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied] = useState(false);
+  const [applicationMessage, setApplicationMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -21,6 +26,24 @@ const [applicationMessage, setApplicationMessage] = useState("");
       try {
         const data = await getJobById(id);
         setJob(data);
+
+        const applications = await getApplications();
+
+        const candidates = await getCandidates();
+
+        const candidate = candidates.find(
+          (item) => item.userId === user?.id
+        );
+
+        if (candidate) {
+          const alreadyApplied = applications.some(
+            (application) =>
+              application.candidateId === candidate.id &&
+              application.jobId === data.id
+          );
+
+          setApplied(alreadyApplied);
+        }
       } catch {
         setError("Unable to load job details.");
       } finally {
@@ -28,37 +51,51 @@ const [applicationMessage, setApplicationMessage] = useState("");
       }
     };
 
-    loadJob();
-  }, [id]);
-const handleApply = async () => {
-  try {
-    setApplying(true);
-    setApplicationMessage("");
+    if (user?.id) {
+      loadJob();
+    }
+  }, [id, user?.id]);
 
-    const candidates = await getCandidates();
-
-    const candidate = candidates.find(
-      (item) => item.userId === user?.id
-    );
-
-    if (!candidate) {
-      setApplicationMessage("Candidate profile not found.");
+  const handleApply = async () => {
+    if (applied || applying) {
       return;
     }
 
-    await createApplication({
-      candidateId: candidate.id,
-      jobId: job.id,
-      status: "APPLIED",
-    });
+    try {
+      setApplying(true);
+      setApplicationMessage("");
 
-    setApplicationMessage("Application submitted successfully!");
-  } catch {
-    setApplicationMessage("Unable to submit application.");
-  } finally {
-    setApplying(false);
-  }
-};
+      const candidates = await getCandidates();
+
+      const candidate = candidates.find(
+        (item) => item.userId === user?.id
+      );
+
+      if (!candidate) {
+        setApplicationMessage("Candidate profile not found.");
+        return;
+      }
+
+      await createApplication({
+        candidateId: candidate.id,
+        jobId: job.id,
+        status: "APPLIED",
+      });
+
+      setApplied(true);
+      setApplicationMessage("Application submitted successfully!");
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setApplied(true);
+        setApplicationMessage("You have already applied to this job.");
+      } else {
+        setApplicationMessage("Unable to submit application.");
+      }
+    } finally {
+      setApplying(false);
+    }
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -125,18 +162,22 @@ const handleApply = async () => {
           </div>
 
           <button
-  className="primary-button"
-  onClick={handleApply}
-  disabled={applying}
->
-  {applying ? "Applying..." : "Apply Now"}
-</button>
+            className="primary-button"
+            onClick={handleApply}
+            disabled={applying || applied}
+          >
+            {applied
+              ? "Applied"
+              : applying
+                ? "Applying..."
+                : "Apply Now"}
+          </button>
 
-{applicationMessage && (
-  <p className="application-message">
-    {applicationMessage}
-  </p>
-)}
+          {applicationMessage && (
+            <p className="application-message">
+              {applicationMessage}
+            </p>
+          )}
         </div>
       </div>
     </DashboardLayout>

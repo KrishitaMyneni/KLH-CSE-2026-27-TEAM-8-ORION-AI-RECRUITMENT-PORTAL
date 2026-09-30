@@ -306,7 +306,11 @@ function RecruiterScreening() {
               className={`screening-option ${
                 screeningMode === "MANUAL" ? "active" : ""
               }`}
-              onClick={() => setScreeningMode("MANUAL")}
+              onClick={() => {
+  setScreeningMode("MANUAL");
+  setScreeningResults([]);
+  setMessage("");
+}}
             >
               <strong>Manual Screening</strong>
 
@@ -532,47 +536,53 @@ function RecruiterScreening() {
                           </span>
                         </div>
 
-                        {screeningMethod === "keyword" && (
-                          <div className="orion-keywords">
+                        <div className="orion-keywords">
 
-                            <div className="orion-keyword-group">
+  <div className="orion-keyword-group">
+    <span className="orion-keyword-title matched">
+      Matched Skills
+    </span>
 
-                              <span className="orion-keyword-title matched">
-                                Matched Skills
-                              </span>
+    <div className="orion-keyword-list">
+      {(
+        candidate.matched_keywords ||
+        candidate.strong_matches ||
+        []
+      ).map((skill) => (
+        <span key={skill}>{skill}</span>
+      ))}
+    </div>
+  </div>
 
-                              <div className="orion-keyword-list">
-                                {candidate.matched_keywords?.map(
-                                  (keyword) => (
-                                    <span key={keyword}>
-                                      {keyword}
-                                    </span>
-                                  )
-                                )}
-                              </div>
+  <div className="orion-keyword-group">
+    <span className="orion-keyword-title partial">
+      Partial Matches
+    </span>
 
-                            </div>
+    <div className="orion-keyword-list">
+      {(candidate.partial_matches || []).map((skill) => (
+        <span key={skill}>{skill}</span>
+      ))}
+    </div>
+  </div>
 
-                            <div className="orion-keyword-group">
+  <div className="orion-keyword-group">
+    <span className="orion-keyword-title missing">
+      Missing Skills
+    </span>
 
-                              <span className="orion-keyword-title missing">
-                                Missing Skills
-                              </span>
+    <div className="orion-keyword-list">
+      {(
+        candidate.missing_keywords ||
+        candidate.missing_skills ||
+        []
+      ).map((skill) => (
+        <span key={skill}>{skill}</span>
+      ))}
+    </div>
+  </div>
 
-                              <div className="orion-keyword-list">
-                                {candidate.missing_keywords?.map(
-                                  (keyword) => (
-                                    <span key={keyword}>
-                                      {keyword}
-                                    </span>
-                                  )
-                                )}
-                              </div>
-
-                            </div>
-
-                          </div>
-                        )}
+</div>
 
                       </div>
 
@@ -701,67 +711,101 @@ function RecruiterScreening() {
 
           </section>
         )}
-
         {screeningResults.length > 0 &&
-          otherApplicants.length > 0 && (
-            <section className="dashboard-section">
+  otherApplicants.length > 0 && (
+    <section className="dashboard-section">
+      <div className="section-heading">
+        <div>
+          <h2>Other Applicants</h2>
+          <p>
+            Applicants outside the selected Top-N results.
+          </p>
+        </div>
+      </div>
 
-              <div className="section-heading">
+      <div className="screening-other-applicants">
+        {otherApplicants.map((application) => {
+          const candidate = getCandidate(application.candidateId);
+
+          const currentStatus =
+            application.status || "APPLIED";
+
+          const key =
+            `${application.candidateId}-${application.jobId}`;
+
+          return (
+            <div
+              className="screening-other-card"
+              key={application.id}
+            >
+              <div className="screening-other-info">
+                <div className="applicant-avatar">
+                  {candidate?.name?.charAt(0) || "?"}
+                </div>
+
                 <div>
-                  <h2>Other Applicants</h2>
+                  <strong>
+                    {candidate?.name || "Unknown Candidate"}
+                  </strong>
 
-                  <p>
-                    Applicants outside the selected Top-N results.
-                  </p>
+                  <span>
+                    Candidate ID: {application.candidateId}
+                  </span>
                 </div>
               </div>
 
-              <div className="screening-other-applicants">
+              <div className="screening-other-actions">
+                <select
+                  value={currentStatus}
+                  disabled={savingRanked === key}
+                  onChange={async (event) => {
+                    try {
+                      setSavingRanked(key);
 
-                {otherApplicants.map((application) => {
+                      const updatedApplication =
+                        await updateApplicationStatus(
+                          application.id,
+                          event.target.value
+                        );
 
-                  const candidate = getCandidate(
-                    application.candidateId
-                  );
+                      handleStatusUpdate(updatedApplication);
+                    } catch (error) {
+                      console.error(
+                        "Status update failed:",
+                        error
+                      );
 
-                  return (
-                    <div
-                      className="screening-other-card"
-                      key={application.id}
-                    >
+                      setMessage(
+                        "Unable to update application status."
+                      );
+                    } finally {
+                      setSavingRanked(null);
+                    }
+                  }}
+                >
+                  <option value="APPLIED">
+                    Applied
+                  </option>
 
-                      <div className="screening-other-info">
+                  <option value="SHORTLISTED">
+                    Shortlisted
+                  </option>
 
-                        <div className="applicant-avatar">
-                          {candidate?.name?.charAt(0) || "?"}
-                        </div>
+                  <option value="INTERVIEW">
+                    Interview
+                  </option>
 
-                        <div>
-                          <strong>
-                            {candidate?.name ||
-                              "Unknown Candidate"}
-                          </strong>
-
-                          <span>
-                            Candidate ID:{" "}
-                            {application.candidateId}
-                          </span>
-                        </div>
-
-                      </div>
-
-                      <span className="not-shortlisted">
-                        Not shortlisted by AI
-                      </span>
-
-                    </div>
-                  );
-                })}
-
+                  <option value="REJECTED">
+                    Rejected
+                  </option>
+                </select>
               </div>
-
-            </section>
-          )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  )}
 
         {screeningResults.length === 0 && (
           <section className="dashboard-section">

@@ -20,7 +20,12 @@ function Notifications() {
             String(notification.userId) === String(user?.id)
         );
 
-        setNotifications(userNotifications);
+        setNotifications(
+          userNotifications.sort(
+            (a, b) =>
+              new Date(b.createdAt) - new Date(a.createdAt)
+          )
+        );
       } catch (error) {
         console.error("Failed to load notifications:", error);
         setMessage("Unable to load notifications.");

@@ -56,6 +56,38 @@ function Applications() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const refreshApplications = async () => {
+      try {
+        const applicationData = await getApplications();
+
+        if (candidate) {
+          const userApplications = applicationData.filter(
+            (application) =>
+              application.candidateId === candidate.id
+          );
+
+          setApplications(userApplications);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to refresh applications:",
+          error
+        );
+      }
+    };
+
+    const handleFocus = () => {
+      refreshApplications();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [candidate]);
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -113,11 +145,14 @@ function Applications() {
                       <h2>
                         {job?.title || "Job unavailable"}
                       </h2>
+
                       <p>
                         {job?.company || "Unknown company"}
                       </p>
+
                       <span>
-                        {job?.location || "Location unavailable"}
+                        {job?.location ||
+                          "Location unavailable"}
                       </span>
                     </div>
                   </div>

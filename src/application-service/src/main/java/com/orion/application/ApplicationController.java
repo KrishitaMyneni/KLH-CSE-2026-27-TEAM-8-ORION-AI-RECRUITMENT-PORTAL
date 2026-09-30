@@ -1,6 +1,8 @@
 package com.orion.application;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -31,14 +33,41 @@ public class ApplicationController {
 
     @PostMapping
     public Application createApplication(@RequestBody Application application) {
-        Application savedApplication = applicationRepository.save(application);
+
+        if (applicationRepository
+                .findByCandidateIdAndJobId(
+                        application.getCandidateId(),
+                        application.getJobId())
+                .isPresent()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "You have already applied to this job."
+            );
+        }
+
+        Application savedApplication =
+                applicationRepository.save(application);
 
         String jobTitle =
                 notificationClient.getJobTitle(application.getJobId());
 
+        Long recruiterId =
+                notificationClient.getRecruiterId(application.getJobId());
+
+        Long candidateUserId =
+                notificationClient.getCandidateUserId(
+                        application.getCandidateId()
+                );
+
         notificationClient.createNotification(
-                getRecruiterId(application.getJobId()),
+                recruiterId,
                 "A new candidate has applied for " + jobTitle + "."
+        );
+
+        notificationClient.createNotification(
+                candidateUserId,
+                "You applied to " + jobTitle + "."
         );
 
         return savedApplication;
