@@ -20,7 +20,7 @@ function Sidebar() {
     { to: "/jobs", label: "⌕ Find Jobs" },
     { to: "/applications", label: "☑ My Applications" },
     { to: "/match-analysis", label: "✦ Skill Growth" },
-    { to: "/candidate/profile", label: "▣ Resume" },
+    { to: "/candidate/profile", label: "▣ Profile" },
     { to: "/notifications", label: "♧ Notifications" },
   ];
 

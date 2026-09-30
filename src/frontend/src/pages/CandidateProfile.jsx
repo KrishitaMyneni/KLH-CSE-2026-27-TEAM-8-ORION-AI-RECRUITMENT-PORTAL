@@ -6,7 +6,7 @@ import {
   getCandidates,
   updateCandidate,
 } from "../services/candidateService";
-import ResumeUpload from "../components/candidate/ResumeUpload";
+
 
 function CandidateProfile() {
   const { user } = useAuth();
@@ -235,37 +235,7 @@ function CandidateProfile() {
             )}
           </div>
 
-          {/* Resume */}
-
-          <div className="profile-card">
-            <h2>Resume</h2>
-
-            {editing ? (
-              <ResumeUpload
-                onUpload={(file) => {
-                  if (file) {
-                    setCandidate({
-                      ...candidate,
-                      resumeUrl: file.name,
-                    });
-                  }
-                }}
-              />
-            ) : candidate.resumeUrl ? (
-              <a
-                href={candidate.resumeUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="secondary-button"
-              >
-                View Resume
-              </a>
-            ) : (
-              <p className="profile-muted">
-                No resume uploaded yet.
-              </p>
-            )}
-          </div>
+          
 
         </div>
       </div>

@@ -4,11 +4,15 @@ import ApplicantTable from "../components/recruiter/ApplicantTable";
 import { getApplications } from "../services/applicationService";
 import { getCandidates } from "../services/candidateService";
 import { getJobs } from "../services/jobService";
+import { useAuth } from "../context/AuthContext";
 
 function RecruiterApplicants() {
+  const { user } = useAuth();
+
   const [applications, setApplications] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [jobs, setJobs] = useState([]);
+  const [selectedJobId, setSelectedJobId] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -21,9 +25,20 @@ function RecruiterApplicants() {
           getJobs(),
         ]);
 
-        setApplications(applicationData);
-        setCandidates(candidateData);
-        setJobs(jobData);
+        const recruiterJobs = (jobData || []).filter(
+          (job) => String(job.recruiterId) === String(user?.id)
+        );
+
+        setJobs(recruiterJobs);
+        setCandidates(candidateData || []);
+
+        const recruiterJobIds = recruiterJobs.map((job) => job.id);
+
+        setApplications(
+          (applicationData || []).filter((application) =>
+            recruiterJobIds.includes(application.jobId)
+          )
+        );
       } catch (error) {
         console.error("Failed to load applicants:", error);
         setMessage("Unable to load applicants.");
@@ -32,8 +47,10 @@ function RecruiterApplicants() {
       }
     };
 
-    loadApplicants();
-  }, []);
+    if (user?.id) {
+      loadApplicants();
+    }
+  }, [user]);
 
   const handleStatusUpdate = (updatedApplication) => {
     setApplications((currentApplications) =>
@@ -44,6 +61,13 @@ function RecruiterApplicants() {
       )
     );
   };
+
+  const selectedJobApplications = selectedJobId
+    ? applications.filter(
+        (application) =>
+          Number(application.jobId) === Number(selectedJobId)
+      )
+    : applications;
 
   if (loading) {
     return (
@@ -68,11 +92,38 @@ function RecruiterApplicants() {
           <p className="application-message">{message}</p>
         )}
 
+        <section className="dashboard-section screening-settings">
+          <h2>Select Job</h2>
+
+          <select
+            value={selectedJobId}
+            onChange={(event) =>
+              setSelectedJobId(
+                event.target.value === ""
+                  ? ""
+                  : Number(event.target.value)
+              )
+            }
+          >
+            <option value="">Select a job</option>
+
+            {jobs.map((job) => (
+              <option key={job.id} value={job.id}>
+                {job.title}
+              </option>
+            ))}
+          </select>
+        </section>
+
         <section className="dashboard-section">
-          <h2>Candidate Applications</h2>
+          <h2>
+            {selectedJobId
+              ? "Applicants for Selected Job"
+              : "Candidate Applications"}
+          </h2>
 
           <ApplicantTable
-            applications={applications}
+            applications={selectedJobApplications}
             candidates={candidates}
             jobs={jobs}
             screeningMode=""

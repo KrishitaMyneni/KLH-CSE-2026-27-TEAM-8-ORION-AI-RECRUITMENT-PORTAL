@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -11,6 +10,7 @@ import { getApplications } from "../services/applicationService";
 import { analyzeCandidateJob } from "../services/aiService";
 import MatchScore from "../components/candidate/MatchScore";
 import SkillComparison from "../components/candidate/SkillComparison";
+
 function CandidateDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -103,7 +103,6 @@ function CandidateDashboard() {
     candidate?.email,
     candidate?.phone,
     candidate?.skills,
-    candidate?.resumeUrl,
   ];
 
   const completedFields = profileFields.filter(
@@ -121,9 +120,9 @@ function CandidateDashboard() {
     const job = jobs.find((item) => item.id === application.jobId);
 
     return {
-      ...application,
-      jobTitle: job?.title || `Application #${application.id}`,
-    };
+  ...application,
+  jobTitle: job?.title || "Application #" + application.id,
+};
   });
 
   return (
@@ -183,8 +182,6 @@ function CandidateDashboard() {
         </div>
       </section>
 
-      {/* Recommended Jobs */}
-
       <section className="dashboard-section">
         <div className="section-heading">
           <div>
@@ -235,8 +232,6 @@ function CandidateDashboard() {
         )}
       </section>
 
-      {/* AI Skill Comparison */}
-
       {jobMatches.length > 0 && (
         <section className="dashboard-section">
           <SkillComparison
@@ -250,8 +245,6 @@ function CandidateDashboard() {
           />
         </section>
       )}
-
-      {/* Application Tracker */}
 
       <section className="dashboard-section">
         <ApplicationTracker

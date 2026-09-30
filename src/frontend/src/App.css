@@ -2824,3 +2824,760 @@ a {
 .learning-card:hover {
   transform: translateY(-2px);
 }
+
+/* =========================================================
+   AI SCREENING RESULTS
+========================================================= */
+
+.screening-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.screening-result-card {
+  display: grid;
+  grid-template-columns: 90px minmax(280px, 1fr) 340px;
+  grid-template-rows: auto auto;
+  column-gap: 28px;
+  row-gap: 14px;
+
+  padding: 24px 26px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.06);
+
+  transition: all 0.2s ease;
+}
+
+.screening-result-card:hover {
+  border-color: #f28c28;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.09);
+}
+
+/* Remove old empty placeholder box */
+
+.screening-result-card::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* =========================================================
+   RANK
+========================================================= */
+
+.screening-rank {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+
+  width: 82px;
+  height: 82px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: start;
+
+  border-radius: 16px;
+
+  background: #fff3e6;
+  color: #f28c28;
+
+  font-size: 30px;
+  font-weight: 900;
+}
+
+/* =========================================================
+   CANDIDATE INFO
+========================================================= */
+
+.screening-candidate-info {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 0;
+  gap: 6px;
+}
+
+.screening-candidate-info strong {
+  color: #202938;
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.screening-candidate-info p {
+  margin: 0;
+
+  color: #8993a3;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   AI SCORE BAR
+========================================================= */
+
+.screening-score-bar {
+  width: 100%;
+  max-width: 100%;
+
+  height: 8px;
+
+  margin-top: 14px;
+
+  background: #edf0f4;
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+.screening-score-bar div {
+  height: 100%;
+
+  background: #f28c28;
+
+  border-radius: 999px;
+
+  transition: width 0.5s ease;
+}
+
+/* =========================================================
+   AI SCORE
+========================================================= */
+
+.screening-score {
+  grid-column: 3;
+  grid-row: 1;
+
+  align-self: center;
+
+  text-align: right;
+}
+
+.screening-score strong {
+  display: block;
+
+  color: #f28c28;
+
+  font-size: 30px;
+  line-height: 1;
+
+  font-weight: 900;
+}
+
+.screening-score span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #8993a3;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   KEYWORD DETAILS
+========================================================= */
+
+.keyword-details {
+  grid-column: 2;
+  grid-row: 2;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+
+  margin-top: 8px;
+  padding-top: 14px;
+
+  border-top: 1px solid #edf0f4;
+}
+
+.keyword-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.matched-label {
+  color: #23845b;
+}
+
+.missing-label {
+  color: #c84f4f;
+}
+
+.keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.keyword-list span {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.keyword-details > div:first-child .keyword-list span {
+  background: #edf8f2;
+  color: #237d56;
+}
+
+.keyword-details > div:last-child .keyword-list span {
+  background: #fff0f0;
+  color: #b94b4b;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .screening-result-card {
+    grid-template-columns: 82px 1fr;
+    grid-template-rows: auto auto auto;
+
+    gap: 14px 18px;
+  }
+
+  .screening-rank {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+
+    width: 70px;
+    height: 70px;
+
+    font-size: 25px;
+  }
+
+  .screening-candidate-info {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .screening-score {
+    grid-column: 2;
+    grid-row: 2;
+
+    text-align: left;
+  }
+
+  .keyword-details {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .screening-result-card {
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px;
+  }
+
+  .screening-rank {
+    width: 64px;
+    height: 64px;
+
+    font-size: 23px;
+  }
+
+  .screening-candidate-info {
+    width: 100%;
+  }
+
+  .screening-candidate-info strong {
+    font-size: 21px;
+  }
+
+  .screening-score {
+    width: 100%;
+
+    text-align: left;
+  }
+
+  .keyword-details {
+    width: 100%;
+
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   ORION AI SCREENING RESULTS - CLEAN CARD
+========================================================= */
+
+.orion-screening-results {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.orion-screening-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+
+  transition: 0.2s ease;
+}
+
+.orion-screening-card:hover {
+  border-color: #f28c28;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.09);
+}
+
+/* LEFT SIDE */
+
+.orion-screening-main {
+  position: relative;
+
+  padding: 26px 30px;
+  min-width: 0;
+}
+
+/* CANDIDATE HEADER */
+
+.orion-candidate-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.orion-rank {
+  flex-shrink: 0;
+
+  width: 72px;
+  height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff3e6;
+  color: #f28c28;
+
+  border-radius: 15px;
+
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.orion-candidate-details {
+  min-width: 0;
+}
+
+.orion-candidate-details h3 {
+  margin: 0;
+
+  color: #202938;
+
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.orion-candidate-details span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #8b95a5;
+
+  font-size: 12px;
+}
+
+/* SCORE */
+
+.orion-score-section {
+  margin-top: 24px;
+}
+
+.orion-score-label {
+  margin-bottom: 8px;
+
+  color: #737d8d;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.orion-score-bar {
+  width: 100%;
+  height: 9px;
+
+  background: #edf0f4;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+.orion-score-bar div {
+  height: 100%;
+
+  background: #f28c28;
+
+  border-radius: 999px;
+
+  transition: width 0.5s ease;
+}
+
+/* AI SCORE */
+
+.orion-ai-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  margin-top: 9px;
+}
+
+.orion-ai-score strong {
+  color: #f28c28;
+
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.orion-ai-score span {
+  color: #8b95a5;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+}
+
+/* KEYWORDS */
+
+.orion-keywords {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 22px;
+
+  margin-top: 22px;
+  padding-top: 18px;
+
+  border-top: 1px solid #edf0f4;
+}
+
+.orion-keyword-title {
+  display: block;
+
+  margin-bottom: 9px;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.orion-keyword-title.matched {
+  color: #23845b;
+}
+
+.orion-keyword-title.missing {
+  color: #c84f4f;
+}
+
+.orion-keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.orion-keyword-list span {
+  padding: 5px 9px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.orion-keyword-group:first-child
+.orion-keyword-list span {
+  background: #edf8f2;
+  color: #237d56;
+}
+
+.orion-keyword-group:last-child
+.orion-keyword-list span {
+  background: #fff0f0;
+  color: #b94b4b;
+}
+
+/* =========================================================
+   RIGHT SIDE - RECRUITER EVALUATION
+========================================================= */
+
+.orion-screening-editor {
+  padding: 26px;
+
+  background: #f8f9fb;
+
+  border-left: 1px solid #e5e7eb;
+}
+
+.orion-editor-title {
+  margin-bottom: 20px;
+
+  color: #202938;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.orion-editor-field {
+  margin-bottom: 15px;
+}
+
+.orion-editor-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #626d7d;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.orion-editor-field select,
+.orion-editor-field input,
+.orion-editor-field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe3e8;
+  border-radius: 8px;
+
+  color: #202938;
+
+  font-size: 13px;
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+.orion-editor-field select:focus,
+.orion-editor-field input:focus,
+.orion-editor-field textarea:focus {
+  border-color: #f28c28;
+
+  box-shadow: 0 0 0 3px rgba(242, 140, 40, 0.1);
+}
+
+.orion-editor-field textarea {
+  resize: vertical;
+
+  min-height: 72px;
+
+  font-family: inherit;
+}
+
+.orion-editor-field input::placeholder,
+.orion-editor-field textarea::placeholder {
+  color: #a4acb8;
+}
+
+/* SAVE */
+
+.orion-save-button {
+  width: 100%;
+
+  margin-top: 3px;
+
+  padding: 11px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f28c28;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.orion-save-button:hover {
+  background: #df7817;
+}
+
+.orion-save-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   OTHER APPLICANTS
+========================================================= */
+
+.screening-other-applicants {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.screening-other-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 15px 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.screening-other-info {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.screening-other-info strong {
+  display: block;
+
+  color: #202938;
+
+  font-size: 14px;
+}
+
+.screening-other-info span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8b95a5;
+
+  font-size: 11px;
+}
+
+.not-shortlisted {
+  padding: 5px 9px;
+
+  background: #f3f4f6;
+
+  border-radius: 6px;
+
+  color: #737d8d;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .orion-screening-card {
+    grid-template-columns: 1fr;
+  }
+
+  .orion-screening-editor {
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .orion-screening-main {
+    padding: 20px;
+  }
+
+  .orion-screening-editor {
+    padding: 20px;
+  }
+
+  .orion-candidate-heading {
+    gap: 12px;
+  }
+
+  .orion-rank {
+    width: 60px;
+    height: 60px;
+
+    font-size: 22px;
+  }
+
+  .orion-candidate-details h3 {
+    font-size: 20px;
+  }
+
+  .orion-keywords {
+    grid-template-columns: 1fr;
+  }
+
+  .screening-other-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}

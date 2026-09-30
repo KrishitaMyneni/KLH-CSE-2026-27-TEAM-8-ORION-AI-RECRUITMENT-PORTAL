@@ -4,36 +4,6 @@ import { getJobs } from "../services/jobService";
 import { createJob, deleteJob } from "../services/recruiterService";
 import { useAuth } from "../context/AuthContext";
 
-const dummyJobs = [
-  {
-    id: 101,
-    title: "Frontend Developer",
-    company: "ORION Technologies",
-    location: "Hyderabad",
-    description:
-      "Build modern and responsive web applications using React.",
-    requiredSkills: "React, JavaScript, HTML, CSS",
-  },
-  {
-    id: 102,
-    title: "Java Backend Developer",
-    company: "ORION Technologies",
-    location: "Bangalore",
-    description:
-      "Develop scalable backend services and REST APIs using Spring Boot.",
-    requiredSkills: "Java, Spring Boot, PostgreSQL",
-  },
-  {
-    id: 103,
-    title: "AI/ML Engineer",
-    company: "ORION Technologies",
-    location: "Remote",
-    description:
-      "Build machine learning pipelines and AI-powered recruitment systems.",
-    requiredSkills: "Python, Machine Learning, FastAPI",
-  },
-];
-
 function RecruiterJobs() {
   const { user } = useAuth();
 
@@ -54,17 +24,24 @@ function RecruiterJobs() {
     const loadJobs = async () => {
       try {
         const data = await getJobs();
-        setJobs(data?.length ? data : dummyJobs);
+
+        const recruiterJobs = (data || []).filter(
+          (job) => String(job.recruiterId) === String(user?.id)
+        );
+
+        setJobs(recruiterJobs);
       } catch (error) {
         console.error("Failed to load jobs:", error);
-        setJobs(dummyJobs);
+        setJobs([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadJobs();
-  }, []);
+    if (user?.id) {
+      loadJobs();
+    }
+  }, [user]);
 
   const handleChange = (event) => {
     setForm({
@@ -101,23 +78,7 @@ function RecruiterJobs() {
     } catch (error) {
       console.error("Job creation failed:", error);
 
-      const dummyJob = {
-        id: Date.now(),
-        ...form,
-      };
-
-      setJobs((currentJobs) => [...currentJobs, dummyJob]);
-
-      setForm({
-        title: "",
-        company: "",
-        location: "",
-        description: "",
-        requiredSkills: "",
-      });
-
-      setShowForm(false);
-      setMessage("Demo job added.");
+      setMessage("Unable to create job.");
     }
   };
 
@@ -131,12 +92,7 @@ function RecruiterJobs() {
 
       setMessage("Job deleted successfully.");
     } catch (error) {
-      // Allow dummy jobs to be removed from the UI.
-      setJobs((currentJobs) =>
-        currentJobs.filter((job) => job.id !== jobId)
-      );
-
-      setMessage("Job removed from demo view.");
+      setMessage("Unable to delete job.");
     }
   };
 

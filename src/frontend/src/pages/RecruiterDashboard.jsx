@@ -2,65 +2,11 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { getJobs } from "../services/jobService";
 import { getApplications } from "../services/applicationService";
-
-const dummyJobs = [
-  {
-    id: 101,
-    title: "Frontend Developer",
-    company: "ORION Technologies",
-    location: "Hyderabad",
-    requiredSkills: "React, JavaScript, HTML, CSS",
-  },
-  {
-    id: 102,
-    title: "Java Backend Developer",
-    company: "ORION Technologies",
-    location: "Bangalore",
-    requiredSkills: "Java, Spring Boot, PostgreSQL",
-  },
-  {
-    id: 103,
-    title: "AI/ML Engineer",
-    company: "ORION Technologies",
-    location: "Remote",
-    requiredSkills: "Python, Machine Learning, FastAPI",
-  },
-];
-
-const dummyApplications = [
-  {
-    id: 201,
-    candidateId: 1,
-    jobId: 101,
-    status: "APPLIED",
-  },
-  {
-    id: 202,
-    candidateId: 2,
-    jobId: 101,
-    status: "SHORTLISTED",
-  },
-  {
-    id: 203,
-    candidateId: 3,
-    jobId: 102,
-    status: "INTERVIEW",
-  },
-  {
-    id: 204,
-    candidateId: 4,
-    jobId: 103,
-    status: "APPLIED",
-  },
-  {
-    id: 205,
-    candidateId: 5,
-    jobId: 102,
-    status: "SHORTLISTED",
-  },
-];
+import { useAuth } from "../context/AuthContext";
 
 function RecruiterDashboard() {
+  const { user } = useAuth();
+
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,22 +19,36 @@ function RecruiterDashboard() {
           getApplications(),
         ]);
 
-        setJobs(jobData?.length ? jobData : dummyJobs);
-        setApplications(
-          applicationData?.length ? applicationData : dummyApplications
+        console.log("LOGGED IN USER:", user);
+        console.log("ALL JOBS:", jobData);
+
+        const recruiterJobs = (jobData || []).filter(
+          (job) => String(job.recruiterId) === String(user?.id)
         );
+
+        console.log("RECRUITER JOBS:", recruiterJobs);
+
+        const recruiterJobIds = recruiterJobs.map((job) => job.id);
+
+        const recruiterApplications = (applicationData || []).filter(
+          (application) => recruiterJobIds.includes(application.jobId)
+        );
+
+        setJobs(recruiterJobs);
+        setApplications(recruiterApplications);
       } catch (error) {
         console.error("Recruiter dashboard error:", error);
-
-        setJobs(dummyJobs);
-        setApplications(dummyApplications);
+        setJobs([]);
+        setApplications([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadDashboard();
-  }, []);
+    if (user?.id) {
+      loadDashboard();
+    }
+  }, [user]);
 
   const activeApplications = applications.filter(
     (application) => application.status !== "REJECTED"

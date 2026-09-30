@@ -17,6 +17,9 @@ public class Candidate {
     private String skills;
     private String resumeUrl;
 
+    @Column(columnDefinition = "TEXT")
+    private String resumeText;
+
     public Candidate() {
     }
 
@@ -70,5 +73,13 @@ public class Candidate {
 
     public void setResumeUrl(String resumeUrl) {
         this.resumeUrl = resumeUrl;
+    }
+
+    public String getResumeText() {
+        return resumeText;
+    }
+
+    public void setResumeText(String resumeText) {
+        this.resumeText = resumeText;
     }
 }

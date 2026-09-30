@@ -42,6 +42,7 @@ public Candidate updateCandidate(
     existing.setPhone(candidate.getPhone());
     existing.setSkills(candidate.getSkills());
     existing.setResumeUrl(candidate.getResumeUrl());
+    existing.setResumeText(candidate.getResumeText());
 
     return candidateRepository.save(existing);
 }

@@ -9,9 +9,13 @@ import java.util.List;
 public class ApplicationController {
 
     private final ApplicationRepository applicationRepository;
+    private final NotificationClient notificationClient;
 
-    public ApplicationController(ApplicationRepository applicationRepository) {
+    public ApplicationController(
+            ApplicationRepository applicationRepository,
+            NotificationClient notificationClient) {
         this.applicationRepository = applicationRepository;
+        this.notificationClient = notificationClient;
     }
 
     @GetMapping
@@ -27,7 +31,17 @@ public class ApplicationController {
 
     @PostMapping
     public Application createApplication(@RequestBody Application application) {
-        return applicationRepository.save(application);
+        Application savedApplication = applicationRepository.save(application);
+
+        String jobTitle =
+                notificationClient.getJobTitle(application.getJobId());
+
+        notificationClient.createNotification(
+                getRecruiterId(application.getJobId()),
+                "A new candidate has applied for " + jobTitle + "."
+        );
+
+        return savedApplication;
     }
 
     @PutMapping("/{id}/status")
@@ -40,12 +54,35 @@ public class ApplicationController {
 
         application.setStatus(status);
 
-        return applicationRepository.save(application);
+        Application savedApplication =
+                applicationRepository.save(application);
+
+        Long candidateUserId =
+                notificationClient.getCandidateUserId(
+                        application.getCandidateId()
+                );
+
+        String jobTitle =
+                notificationClient.getJobTitle(
+                        application.getJobId()
+                );
+
+        notificationClient.createNotification(
+                candidateUserId,
+                "Your application for " + jobTitle +
+                        " has been updated to " + status + "."
+        );
+
+        return savedApplication;
     }
 
     @DeleteMapping("/{id}")
     public String deleteApplication(@PathVariable Long id) {
         applicationRepository.deleteById(id);
         return "Application deleted";
+    }
+
+    private Long getRecruiterId(Long jobId) {
+        return notificationClient.getRecruiterId(jobId);
     }
 }

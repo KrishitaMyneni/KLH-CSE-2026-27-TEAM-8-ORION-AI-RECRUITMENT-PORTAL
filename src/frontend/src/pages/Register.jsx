@@ -37,24 +37,20 @@ function Register() {
     email: user.email,
     phone: "",
     skills: "",
-    resumeUrl: ""
   });
 
   navigate("/login");
 } catch (error) {
-  console.log("Registration error:", error);
-  console.log("Backend response:", error.response?.data);
+  console.log("STATUS:", error.response?.status);
+  console.log("URL:", error.config?.url);
+  console.log("DATA:", error.response?.data);
 
   setError(
-    typeof error.response?.data === "string"
-      ? error.response.data
-      : error.response?.data?.message ||
-        error.message ||
-        "Registration failed."
+    `Error ${error.response?.status}: ${error.config?.url}`
   );
 } finally {
-      setLoading(false);
-    }
+  setLoading(false);
+}
   };
 
   return (

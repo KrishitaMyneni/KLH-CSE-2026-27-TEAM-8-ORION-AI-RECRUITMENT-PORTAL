@@ -172,15 +172,7 @@ function ApplicantTable({
                         {candidate?.email || "No email"}
                       </small>
 
-                      {candidate?.resumeUrl && (
-                        <a
-                          href={candidate.resumeUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          View Resume
-                        </a>
-                      )}
+                      
                     </div>
                   </div>
                 </td>
