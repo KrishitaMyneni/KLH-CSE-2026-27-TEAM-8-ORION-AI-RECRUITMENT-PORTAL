@@ -3339,14 +3339,17 @@ a {
   font-weight: 600;
 }
 
-.orion-keyword-group:first-child
-.orion-keyword-list span {
+.orion-keyword-group:nth-child(1) .orion-keyword-list span {
   background: #edf8f2;
   color: #237d56;
 }
 
-.orion-keyword-group:last-child
-.orion-keyword-list span {
+.orion-keyword-group:nth-child(2) .orion-keyword-list span {
+  background: #fff5e2;
+  color: #966414;
+}
+
+.orion-keyword-group:nth-child(3) .orion-keyword-list span {
   background: #fff0f0;
   color: #b94b4b;
 }
