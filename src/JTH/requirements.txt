@@ -1,0 +1,10 @@
+pydantic
+ollama
+pandas
+numpy
+tqdm
+pandas
+scikit-learn
+shap
+matplotlib
+gzip
